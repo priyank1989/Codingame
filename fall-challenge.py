@@ -5,16 +5,37 @@ import math
 # the standard input according to the problem statement.
 
 class witch:
-    pass
+    def __init__(self, witch_details: str):
+        """
+        Initializing witch
+        """
+        self.inv_0, self.inv_1, self.inv_2, self.inv_3, self.score = [int(j) for j in witch_details.split()]
 
 
 class item:
-    pass
-    
+    def __init__(self, item_details : str):
+        """
+        Initializing item
+        """
+        self.action_id, self.action_type, self.delta_0, self.delta_1, self.delta_2, self.delta_3, self.price, self.tome_index, self.tax_count, self.castable, self.repeatable = item_details.split()
+        self.action_id = int(self.action_id)
+        self.delta_0 = int(self.delta_0)
+        self.delta_1 = int(self.delta_1)
+        self.delta_2 = int(self.delta_2)
+        self.delta_3 = int(self.delta_3)
+        self.price = int(self.price)
+        self.tome_index = int(self.tome_index)
+        self.tax_count = int(self.tax_count)
+        self.castable = self.castable != "0"
+        self.repeatable = self.repeatable != "0"
+
 
 # game loop
+
 while True:
     action_count = int(input())  # the number of spells and recipes in play
+    list_of_items = []
+
     for i in range(action_count):
         # action_id: the unique ID of this spell or recipe
         # action_type: in the first league: BREW; later: CAST, OPPONENT_CAST, LEARN, BREW
@@ -27,21 +48,29 @@ while True:
         # tax_count: in the first two leagues: always 0; later: the amount of taxed tier-0 ingredients you gain from learning this spell
         # castable: in the first league: always 0; later: 1 if this is a castable player spell
         # repeatable: for the first two leagues: always 0; later: 1 if this is a repeatable player spell
-        action_id, action_type, delta_0, delta_1, delta_2, delta_3, price, tome_index, tax_count, castable, repeatable = input().split()
-        action_id = int(action_id)
-        delta_0 = int(delta_0)
-        delta_1 = int(delta_1)
-        delta_2 = int(delta_2)
-        delta_3 = int(delta_3)
-        price = int(price)
-        tome_index = int(tome_index)
-        tax_count = int(tax_count)
-        castable = castable != "0"
-        repeatable = repeatable != "0"
-    for i in range(2):
-        # inv_0: tier-0 ingredients in inventory
-        # score: amount of rupees
-        inv_0, inv_1, inv_2, inv_3, score = [int(j) for j in input().split()]
+        # action_id, action_type, delta_0, delta_1, delta_2, delta_3, price, tome_index, tax_count, castable, repeatable = input().split()
+        # action_id = int(action_id)
+        # delta_0 = int(delta_0)
+        # delta_1 = int(delta_1)
+        # delta_2 = int(delta_2)
+        # delta_3 = int(delta_3)
+        # price = int(price)
+        # tome_index = int(tome_index)
+        # tax_count = int(tax_count)
+        # castable = castable != "0"
+        # repeatable = repeatable != "0"
+
+        list_of_items.append(item(input()))
+
+    # for i in range(2):
+    #     inv_0: tier-0 ingredients in inventory
+    #     score: amount of rupees
+    #     inv_0, inv_1, inv_2, inv_3, score = [int(j) for j in input().split()]
+
+    me = witch(input())
+    opponent = witch(input())
+
+    print("All details in debug", list_of_items[0], me.score, opponent.score, file=sys.stderr, flush=True)
 
     # Write an action using print
     # To debug: print("Debug messages...", file=sys.stderr, flush=True)
