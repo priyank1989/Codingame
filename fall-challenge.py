@@ -4,6 +4,13 @@ import math
 # Auto-generated code below aims at helping you parse
 # the standard input according to the problem statement.
 
+class witch:
+    pass
+
+
+class item:
+    pass
+    
 
 # game loop
 while True:
