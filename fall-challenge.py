@@ -4,48 +4,90 @@ import math
 # Auto-generated code below aims at helping you parse
 # the standard input according to the problem statement.
 
-class item:
-    def __init__(self, item_details : str):
+class action:
+    def __init__(self, action_details : str):
         """
-        Initializing item
+        Initializing brew
         """
-        self.action_id, self.action_type, self.delta_0, self.delta_1, self.delta_2, self.delta_3, self.price, self.tome_index, self.tax_count, self.castable, self.repeatable = item_details.split()
+        self.action_id, self.action_type, self.delta_0, self.delta_1, self.delta_2, self.delta_3, \
+        self.price, self.tome_index, self.tax_count, self.castable, self.repeatable = action_details.split()
         self.action_id = int(self.action_id)
-        self.delta_0 = abs(int(self.delta_0))
-        self.delta_1 = abs(int(self.delta_1))
-        self.delta_2 = abs(int(self.delta_2))
-        self.delta_3 = abs(int(self.delta_3))
+        self.delta_0 = int(self.delta_0)
+        self.delta_1 = int(self.delta_1)
+        self.delta_2 = int(self.delta_2)
+        self.delta_3 = int(self.delta_3)
         self.price = int(self.price)
         self.tome_index = int(self.tome_index)
         self.tax_count = int(self.tax_count)
         self.castable = self.castable != "0"
         self.repeatable = self.repeatable != "0"
-        self.total_delta = ( self.delta_0 * 1 ) + ( self.delta_1 * 2 ) + ( self.delta_2 * 3 ) + ( self.delta_3 * 4 ) 
+        self.action_difficulty = abs(self.delta_0*1 + self.delta_1*2 + self.delta_2*3 + self.delta_3*4)
+        self.action_inv_need = abs(self.delta_0 + self.delta_1 + self.delta_2 + self.delta_3)
 
 
-class witch:
-    def __init__(self, witch_details: str):
-        """
-        Initializing witch
-        """
-        self.inv_0, self.inv_1, self.inv_2, self.inv_3, self.score = [int(j) for j in witch_details.split()]
-        self.total_inv = (self.inv_0 * 1) + (self.inv_1 * 2) + (self.inv_2 * 3) + (self.inv_3 * 4) 
 
-    def find_best_item(self, list_of_items : item):
+class witch(action):
+
+    def __init__(self):
         """
-        To search for best item to create
+        Initialize witch
         """
-        best_price = -1
-        best_item = list_of_items[0]
-        for item in list_of_items:
-            if self.total_inv > item.total_delta and item.price > best_price:
-                if item.delta_0 < self.inv_0 and item.delta_1 < self.inv_1 and item.delta_2 < self.inv_2 and item.delta_3 < self.inv_3:
-                    best_price = item.price
-                    best_item = item
-        if best_price == -1:
-            return None
+        self.inv_0 = self.inv_1 = self.inv_2 = self.inv_3 = self.score = 0
+        self.spells : action = []
+        self.brews : action = []
+        self.total_inv : int = self.total_inventory()
+
+    def total_inventory(self) -> int:
+        return (self.inv_0 + self.inv_1 + self.inv_2 + self.inv_3)
+    
+    def inventory_score_details(self, _witch_details : str):
+        """
+        Initializing witch inventory
+        """
+        self.inv_0, self.inv_1, self.inv_2, self.inv_3, self.score = [int(j) for j in _witch_details.split()]
+        self.total_inv = self.total_inventory()
+    
+    def add_action(self, _action : action):
+        """
+        Adding actions for witch
+        """
+        #print(f"Action type {_action.action_type}", file=sys.stderr, flush=True)
+        if _action.action_type == "CAST":
+            self.spells.append(_action)
+        elif _action.action_type == "BREW":
+            self.brews.append(_action)
+        
+
+    def find_easiest_brew(self) -> action:
+        """
+        To search for best brew to create
+        """
+        
+        easiest_brew = self.brews[0]
+        for brew in self.brews:
+            if brew.action_difficulty < easiest_brew.action_difficulty:
+                easiest_brew = brew
+        return easiest_brew
+    
+    def is_brew_possible(self, brew: action) -> bool:
+        return (brew.delta_0 + self.inv_0 >= 0) and (brew.delta_1 + self.inv_1 >= 0) and \
+              (brew.delta_2 + self.inv_2 >= 0) and (brew.delta_3 + self.inv_3 >= 0)
+
+    def missing_brew_inv(self, brew : action):
+        """
+        docstring
+        """
+        pass
+    
+
+    def get_action(self):
+
+        easiest_brew = self.find_easiest_brew()
+        print(f"Easiest brew - {easiest_brew.action_id}", file=sys.stderr, flush=True)
+        if self.is_brew_possible(easiest_brew):
+            print(f"BREW {easiest_brew.action_id}")
         else:
-            return best_item
+            print("WAIT")
 
 
 
@@ -54,7 +96,8 @@ class witch:
 
 while True:
     action_count = int(input())  # the number of spells and recipes in play
-    list_of_items = []
+    me = witch()
+    opponent = witch()
 
     for i in range(action_count):
         # action_id: the unique ID of this spell or recipe
@@ -80,25 +123,18 @@ while True:
         # castable = castable != "0"
         # repeatable = repeatable != "0"
 
-        list_of_items.append(item(input()))
+        me.add_action(action(input()))
 
     # for i in range(2):
     #     inv_0: tier-0 ingredients in inventory
     #     score: amount of rupees
     #     inv_0, inv_1, inv_2, inv_3, score = [int(j) for j in input().split()]
 
-    me = witch(input())
-    opponent = witch(input())
-    best_item = me.find_best_item(list_of_items)
-
-    print("All details in debug", list_of_items[0].action_id, me.score, opponent.score, file=sys.stderr, flush=True)
+    me.inventory_score_details(input())
+    opponent.inventory_score_details(input())
 
     # Write an action using print
     # To debug: print("Debug messages...", file=sys.stderr, flush=True)
 
-
     # in the first league: BREW <id> | WAIT; later: BREW <id> | CAST <id> [<times>] | LEARN <id> | REST | WAIT
-    if best_item != None:
-        print(f"BREW {best_item.action_id}")
-    else:
-        print("WAIT")
+    me.get_action()    
