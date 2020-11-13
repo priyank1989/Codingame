@@ -4,14 +4,6 @@ import math
 # Auto-generated code below aims at helping you parse
 # the standard input according to the problem statement.
 
-class witch:
-    def __init__(self, witch_details: str):
-        """
-        Initializing witch
-        """
-        self.inv_0, self.inv_1, self.inv_2, self.inv_3, self.score = [int(j) for j in witch_details.split()]
-
-
 class item:
     def __init__(self, item_details : str):
         """
@@ -28,6 +20,34 @@ class item:
         self.tax_count = int(self.tax_count)
         self.castable = self.castable != "0"
         self.repeatable = self.repeatable != "0"
+        self.total_delta = ( self.delta_0 * 1 ) + ( self.delta_1 * 2 ) + ( self.delta_2 * 3 ) + ( self.delta_3 * 4 ) 
+
+
+class witch:
+    def __init__(self, witch_details: str):
+        """
+        Initializing witch
+        """
+        self.inv_0, self.inv_1, self.inv_2, self.inv_3, self.score = [int(j) for j in witch_details.split()]
+        self.total_inv = (self.inv_0 * 1) + (self.inv_1 * 2) + (self.inv_2 * 3) + (self.inv_3 * 4) 
+
+    def find_best_item(self, list_of_items : item):
+        """
+        To search for best item to create
+        """
+        best_price = -1
+        best_item = list_of_items[0]
+        for item in list_of_items:
+            if self.total_inv > item.total_delta and item.price > best_price:
+                if item.delta_0 < self.inv_0 and item.delta_0 < self.inv_0 and item.delta_0 < self.inv_0 and item.delta_0 < self.inv_0:
+                    best_price = item.price
+                    best_item = item
+        if best_price == -1:
+            return None
+        else:
+            return best_item
+
+
 
 
 # game loop
@@ -69,12 +89,16 @@ while True:
 
     me = witch(input())
     opponent = witch(input())
+    best_item = me.find_best_item(list_of_items)
 
-    print("All details in debug", list_of_items[0], me.score, opponent.score, file=sys.stderr, flush=True)
+    print("All details in debug", list_of_items[0].action_id, me.score, opponent.score, file=sys.stderr, flush=True)
 
     # Write an action using print
     # To debug: print("Debug messages...", file=sys.stderr, flush=True)
 
 
     # in the first league: BREW <id> | WAIT; later: BREW <id> | CAST <id> [<times>] | LEARN <id> | REST | WAIT
-    print("BREW 0")
+    if best_item != None:
+        print(f"BREW {best_item.action_id}")
+    else:
+        print("WAIT")
