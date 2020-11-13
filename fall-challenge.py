@@ -4,7 +4,7 @@ import math
 # Auto-generated code below aims at helping you parse
 # the standard input according to the problem statement.
 
-class action:
+class action(object):
     def __init__(self, action_details : str):
         """
         Initializing brew
@@ -73,7 +73,7 @@ class witch(action):
         return (brew.delta_0 + self.inv_0 >= 0) and (brew.delta_1 + self.inv_1 >= 0) and \
               (brew.delta_2 + self.inv_2 >= 0) and (brew.delta_3 + self.inv_3 >= 0)
 
-    def is_cast_possible(self, cast : action):
+    def is_cast_possible(self, cast : action) -> bool:
         return (cast.delta_0 + self.inv_0 >= 0) and (cast.delta_1 + self.inv_1 >= 0) and \
               (cast.delta_2 + self.inv_2 >= 0) and (cast.delta_3 + self.inv_3 >= 0) and ((self.total_inv + cast.action_inv_need) <= 10) \
                   and cast.castable
@@ -86,25 +86,26 @@ class witch(action):
         return cast_available == 0
 
 
-    def missing_brew_inv(self, brew : action):
+    def missing_brew_inv(self, brew : action) -> str:
         """
         docstring
         """
         pass
-
-        missing_0 = brew.delta_0 + self.inv_0
-        missing_1 = brew.delta_1 + self.inv_1
-        missing_2 = brew.delta_2 + self.inv_2
+ 
         missing_3 = brew.delta_3 + self.inv_3
-        
-        if (missing_3 < 0) and self.is_cast_possible(self.spells[3]):
-            return f"CAST {self.spells[3].action_id}"
-        if (missing_2 < 0) and self.is_cast_possible(self.spells[2]):
-            return f"CAST {self.spells[2].action_id}"
-        if (missing_1 < 0) and self.is_cast_possible(self.spells[1]):
-            return f"CAST {self.spells[1].action_id}"
+        missing_2 = brew.delta_2 + self.inv_2 + (missing_3 if missing_3 < 0 else 0)
+        missing_1 = brew.delta_1 + self.inv_1 + (missing_2 if missing_2 < 0 else 0)
+        missing_0 = brew.delta_0 + self.inv_0 + (missing_1 if missing_1 < 0 else 0)
+        print(f"{missing_3}, {missing_2}, {missing_1}, {missing_0}", file=sys.stderr, flush=True)
+         
         if (missing_0 < 0) and self.is_cast_possible(self.spells[0]):
             return f"CAST {self.spells[0].action_id}"
+        if (missing_1 < 0) and self.is_cast_possible(self.spells[1]):
+            return f"CAST {self.spells[1].action_id}"
+        if (missing_2 < 0) and self.is_cast_possible(self.spells[2]):
+            return f"CAST {self.spells[2].action_id}"
+        if (missing_3 < 0) and self.is_cast_possible(self.spells[3]):
+            return f"CAST {self.spells[3].action_id}"
         return "REST"
     
 
@@ -116,8 +117,10 @@ class witch(action):
             print(f"BREW {easiest_brew.action_id}")
         elif not self.is_rest_needed():
             print(f"{self.missing_brew_inv(easiest_brew)}")
-        else:
+        elif self.is_rest_needed():
             print("REST")
+        else:
+            print("WAIT")
 
 
 
