@@ -11,10 +11,10 @@ class item:
         """
         self.action_id, self.action_type, self.delta_0, self.delta_1, self.delta_2, self.delta_3, self.price, self.tome_index, self.tax_count, self.castable, self.repeatable = item_details.split()
         self.action_id = int(self.action_id)
-        self.delta_0 = int(self.delta_0)
-        self.delta_1 = int(self.delta_1)
-        self.delta_2 = int(self.delta_2)
-        self.delta_3 = int(self.delta_3)
+        self.delta_0 = abs(int(self.delta_0))
+        self.delta_1 = abs(int(self.delta_1))
+        self.delta_2 = abs(int(self.delta_2))
+        self.delta_3 = abs(int(self.delta_3))
         self.price = int(self.price)
         self.tome_index = int(self.tome_index)
         self.tax_count = int(self.tax_count)
@@ -39,7 +39,7 @@ class witch:
         best_item = list_of_items[0]
         for item in list_of_items:
             if self.total_inv > item.total_delta and item.price > best_price:
-                if item.delta_0 < self.inv_0 and item.delta_0 < self.inv_0 and item.delta_0 < self.inv_0 and item.delta_0 < self.inv_0:
+                if item.delta_0 < self.inv_0 and item.delta_1 < self.inv_1 and item.delta_2 < self.inv_2 and item.delta_3 < self.inv_3:
                     best_price = item.price
                     best_item = item
         if best_price == -1:
